@@ -15,9 +15,18 @@ function CreatePost() {
       const data = new FormData();
       data.append("caption", formData.caption);
       data.append("category", formData.category);
-      if (formData.image) data.append("image", formData.image);
+      if (formData.image) {
+        // must be exactly 'image' to match upload.single("image")
+        data.append("image", formData.image);
+      }
 
-      const res = await axios.post("http://localhost:5000/post", data, {
+      console.log("🟢 Sending FormData:", {
+        caption: formData.caption,
+        category: formData.category,
+        image: formData.image ? formData.image.name : null,
+      });
+
+      const res = await axios.post("http://localhost:5000/api/post", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -28,6 +37,7 @@ function CreatePost() {
       alert("❌ Failed to create post: " + (error.response?.data?.message || error.message));
     }
   };
+
 
   return (
     <div className="flex flex-col items-center justify-center mt-8">
