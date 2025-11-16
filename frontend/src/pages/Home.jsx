@@ -36,12 +36,41 @@ function Home() {
                   className="rounded-lg mb-3 w-full h-56 object-cover"
                 />
               )}
+
               <h3 className="text-lg font-semibold">{post.caption}</h3>
               <p className="text-sm text-gray-500 mt-1">#{post.category}</p>
+
+              <button
+                className="mt-3 bg-red-500 text-white px-3 py-1 rounded flex items-center gap-2"
+                onClick={async () => {
+                  try {
+                    const res = await axios.put(
+                      `http://localhost:5000/api/post/${post._id}/like`,
+                      { userId: "sampleUser123" }
+                    );
+
+                    // Correct update
+                    setPosts((prev) =>
+                      prev.map((p) =>
+                        p._id === post._id
+                          ? { ...p, likes: res.data.likedBy } // <--- FIXED
+                          : p
+                      )
+                    );
+                  } catch (error) {
+                    console.error("Error liking post:", error);
+                  }
+                }}
+              >
+                💖 Like ({post.likes?.length || 0})
+              </button>
+
             </div>
           ))}
         </div>
+
       )}
+
     </div>
   );
 }

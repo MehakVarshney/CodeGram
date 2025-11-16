@@ -13,6 +13,10 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+cloudinary.api.ping()
+  .then(res => console.log("Cloudinary Connected ✔", res))
+  .catch(err => console.log("Cloudinary Error ❌", err.message));
+
 
 console.log("✅ Cloudinary loaded:", {
   name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -28,6 +32,7 @@ const storage = new CloudinaryStorage({
     allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
+
 
 const upload = multer({ storage });
 
@@ -94,5 +99,29 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Error deleting post" });
   }
 });
+// ❤️ Like / Unlike a post
+router.put("/:id/like", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    // If user already liked → Unlike
+    if (post.likes.includes(userId)) {
+      post.likes = post.likes.filter((id) => id !== userId);
+    } else {
+      post.likes.push(userId);
+    }
+
+    await post.save();
+    res.json({ likes: post.likes.length, likedBy: post.likes });
+  } catch (error) {
+    console.error("Error liking post:", error);
+    res.status(500).json({ message: "Error liking post" });
+  }
+});
+
+
 
 module.exports = router;

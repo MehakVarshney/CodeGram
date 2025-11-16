@@ -26,7 +26,7 @@ function CreatePost() {
         image: formData.image ? formData.image.name : null,
       });
 
-      const res = await axios.post("http://localhost:5000/api/post", data, {
+      const res = await axios.post("http://localhost:5000/api/post/", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
