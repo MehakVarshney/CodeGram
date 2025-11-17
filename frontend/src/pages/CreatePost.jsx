@@ -19,6 +19,7 @@ function CreatePost() {
         // must be exactly 'image' to match upload.single("image")
         data.append("image", formData.image);
       }
+      data.append("user", "GuestUser123");
 
       console.log("🟢 Sending FormData:", {
         caption: formData.caption,
